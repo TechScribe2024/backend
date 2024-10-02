@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import session, { SessionData } from "express-session";
 import passport from "passport";
 import cors from "cors";
@@ -17,6 +17,8 @@ app.use(
 app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session());
+app.use("/auth", require("./routes/authRoutes"));
+app.use("/post", require("./routes/postRoutes"));
 app.listen(PORT, () => {
   console.log(`Running on PORT ${PORT}`);
 });

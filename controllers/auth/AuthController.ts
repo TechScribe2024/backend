@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response): Promise<any> => {
   try {
     const { name, email, password } = req.body;
     if (!name || !email || !password) {
@@ -33,7 +33,7 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
-export const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response): Promise<any> => {
   try {
     const { email, password } = req.body;
 
@@ -71,3 +71,5 @@ export const login = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+module.exports = { register, login };
