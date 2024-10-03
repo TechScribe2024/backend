@@ -1,0 +1,3 @@
+Welcome to HACKTOBERFEST 2024
+Go through CONTRIBUTING && CODE OF CONDUCT
+Happy Coding!!!
