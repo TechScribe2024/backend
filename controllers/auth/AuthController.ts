@@ -2,15 +2,35 @@ import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { z } from "zod";
 
 const prisma = new PrismaClient();
 
+// Define Zod schemas for validation
+
+const registerSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters long"),
+});
+
+const loginSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z
+    .string()
+    .min(6, "Password is required and must be at least 6 character long"),
+});
+
 export const register = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { name, email, password } = req.body;
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+    // Validating  input using registerSchema
+    const result = registerSchema.safeParse(req.body);
+    if (!result.success) {
+      return res
+        .status(400)
+        .json({ message: "Validation error", errors: result.error.errors });
     }
+    const { name, email, password } = result.data;
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -35,14 +55,15 @@ export const register = async (req: Request, res: Response): Promise<any> => {
 
 export const login = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
+    // Validate input using login Schema
+    const result = loginSchema.safeParse(req.body);
+    if (!result.success) {
       return res
         .status(400)
-        .json({ message: "Email and password are required" });
+        .json({ message: "Validation error", errors: result.error.errors });
     }
 
+    const { email, password } = result.data;
     const user = await prisma.user.findUnique({
       where: { email },
     });

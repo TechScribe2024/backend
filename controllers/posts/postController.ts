@@ -1,10 +1,35 @@
 import { Request, Response } from "express";
+import { z } from "zod";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-export const createPost = async (req: Request, res: Response) => {
+// Zod schemas for validation purposes
+
+const postSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  content: z.string().min(1, "Content is required"),
+  tags: z.array(z.string()).optional(),
+});
+
+const idParamSchema = z.object({
+  id: z.string().refine((val) => !isNaN(Number(val)), {
+    message: "Invalid ID format",
+  }),
+});
+
+const tagParamSchema = z.object({
+  tag: z.string().min(1, "Tag is required"),
+});
+
+export const createPost = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { title, content } = req.body;
+    const result = postSchema.safeParse(req.body);
+    if (!result.success) {
+      return res
+        .status(400)
+        .json({ message: "Validation error", errors: result.error.errors });
+    }
+    const { title, content } = result.data;
 
     const newPost = await prisma.post.create({
       data: {
@@ -21,9 +46,15 @@ export const createPost = async (req: Request, res: Response) => {
   }
 };
 
-export const deletePost = async (req: Request, res: Response) => {
+export const deletePost = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { id } = req.params;
+    const result = idParamSchema.safeParse(req.params);
+    if (!result.success) {
+      return res
+        .status(400)
+        .json({ message: "Validation error", errors: result.error.errors });
+    }
+    const { id } = result.data;
 
     const deletedPost = await prisma.post.delete({
       where: {
@@ -38,10 +69,24 @@ export const deletePost = async (req: Request, res: Response) => {
   }
 };
 
-export const updatePost = async (req: Request, res: Response) => {
+export const updatePost = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { id } = req.params;
-    const { title, content } = req.body;
+    const paramsResult = idParamSchema.safeParse(req.params);
+    const bodyResult = postSchema.safeParse(req.body);
+
+    if (!paramsResult.success) {
+      return res.status(400).json({
+        message: "Validation error",
+        errors: paramsResult.error.errors,
+      });
+    }
+    if (!bodyResult.success) {
+      return res
+        .status(400)
+        .json({ message: "Validation error", errors: bodyResult.error.errors });
+    }
+    const { id } = paramsResult.data;
+    const { title, content } = bodyResult.data;
 
     const updatedPost = await prisma.post.update({
       where: {
@@ -60,7 +105,7 @@ export const updatePost = async (req: Request, res: Response) => {
   }
 };
 
-export const topRated = async (req: Request, res: Response) => {
+export const topRated = async (req: Request, res: Response): Promise<any> => {
   try {
     const topRatedBlogs = await prisma.post.findMany({
       where: {
@@ -79,11 +124,20 @@ export const topRated = async (req: Request, res: Response) => {
   }
 };
 
-export const viewedBlog = async (req: Request, res: Response) => {};
+export const viewedBlog = async (
+  req: Request,
+  res: Response
+): Promise<any> => {};
 
-export const getByTag = async (req: Request, res: Response) => {
+export const getByTag = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { tag } = req.params;
+    const result = tagParamSchema.safeParse(req.params);
+    if (!result.success) {
+      return res
+        .status(400)
+        .json({ message: "Validation error", errors: result.error.errors });
+    }
+    const { tag } = result.data;
     const postsByTag = await prisma.post.findMany({
       where: {
         tags: {
