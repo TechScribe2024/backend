@@ -1,10 +1,10 @@
 import express from "express";
+import { authenticateToken } from "../middleware/authenticate";
 import {
   createPost,
   deletePost,
   updatePost,
 } from "../controllers/posts/postController";
-import { authenticateToken } from "../middleware/authenticate";
 
 const router = express.Router();
 
