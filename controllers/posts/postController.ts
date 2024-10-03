@@ -21,7 +21,7 @@ const tagParamSchema = z.object({
   tag: z.string().min(1, "Tag is required"),
 });
 
-export const createPost = async (req: Request, res: Response) => {
+export const createPost = async (req: Request, res: Response): Promise<any> => {
   try {
     const result = postSchema.safeParse(req.body);
     if (!result.success) {
@@ -46,7 +46,7 @@ export const createPost = async (req: Request, res: Response) => {
   }
 };
 
-export const deletePost = async (req: Request, res: Response) => {
+export const deletePost = async (req: Request, res: Response): Promise<any> => {
   try {
     const result = idParamSchema.safeParse(req.params);
     if (!result.success) {
@@ -69,7 +69,7 @@ export const deletePost = async (req: Request, res: Response) => {
   }
 };
 
-export const updatePost = async (req: Request, res: Response) => {
+export const updatePost = async (req: Request, res: Response): Promise<any> => {
   try {
     const paramsResult = idParamSchema.safeParse(req.params);
     const bodyResult = postSchema.safeParse(req.body);
@@ -105,7 +105,7 @@ export const updatePost = async (req: Request, res: Response) => {
   }
 };
 
-export const topRated = async (req: Request, res: Response) => {
+export const topRated = async (req: Request, res: Response): Promise<any> => {
   try {
     const topRatedBlogs = await prisma.post.findMany({
       where: {
@@ -124,9 +124,12 @@ export const topRated = async (req: Request, res: Response) => {
   }
 };
 
-export const viewedBlog = async (req: Request, res: Response) => {};
+export const viewedBlog = async (
+  req: Request,
+  res: Response
+): Promise<any> => {};
 
-export const getByTag = async (req: Request, res: Response) => {
+export const getByTag = async (req: Request, res: Response): Promise<any> => {
   try {
     const result = tagParamSchema.safeParse(req.params);
     if (!result.success) {
