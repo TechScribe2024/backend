@@ -1,0 +1,28 @@
+# Node modules
+node_modules
+# Logs
+npm-debug.log
+# Dependency directories
+jspm_packages
+# Optional npm cache directory
+.npm
+# Optional eslint cache
+.eslintcache
+# TypeScript build output
+dist
+build
+# Prisma migrations
+prisma/migrations
+# Environment variables
+.env
+.env.*.local
+# Git repository
+.git
+.gitignore
+# Docker files
+Dockerfile
+.dockerignore
+# IDE and editor directories and files
+.vscode
+# OS-specific files
+.DS_Store
