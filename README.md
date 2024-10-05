@@ -2,7 +2,12 @@
 # TechScribe Backend Setup
 
 This is the backend for the **TechScribe** project. The application is built using Node.js, Express, and PostgreSQL. Below are the steps to set up the project using Docker.
-
+## If Docker not installed
+- npm i --force
+- npm run start
+- set env to
+  - `DATABASE_URL`: Your PostgreSQL connection string.
+  - `ACCESS_TOKEN_SECRET`: A secret key for session management.
 ## Prerequisites
 
 - Docker installed on your system.
